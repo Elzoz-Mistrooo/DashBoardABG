@@ -17,9 +17,33 @@ export const appRouter = (app, express) => {
   app.use("*", (req, res, next) => {
     return res.json({ message: "In-valid Routing" })
 })
-app.get("/",req,res,next)=>{
-  res.json({Message:"Hello In our Project"})
-}
+app.get("/", (req, res, next) => {
+  res.send(`
+    <html>
+      <head>
+        <title>Dashboard</title>
+        <style>
+          body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f5f5f5;
+            font-family: Arial, sans-serif;
+          }
+          h1 {
+            font-size: 48px;
+            color: #333;
+          }
+        </style>
+      </head>
+      <body>
+        <h1>Hello, that's Dashboard</h1>
+      </body>
+    </html>
+  `);
+});
+
 app.use((err, req, res, next) => {
   console.error("Global Error:", err.message);
   res.status(500).json({

@@ -19,7 +19,7 @@ const app = express();
 appRouter(app, express);
 
 // Export for serverless (for Vercel)
-export const handler = serverless(app);
+export default serverless(app);
 
 // Optional: Run locally for testing
 if (process.env.NODE_ENV !== 'production') {

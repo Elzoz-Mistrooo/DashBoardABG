@@ -12,6 +12,8 @@ export const appRouter = (app, express) => {
   app.use("/company",companiesRoutes)
 
   app.use(cors())
+  console.log("💡 Inside appRouter");
+
   connectDB()
   app.get("/", (req, res) => {
     return res.json({ message: "Hello We're in biggest Dashboard THIS SHIT JOB WALALHY." });

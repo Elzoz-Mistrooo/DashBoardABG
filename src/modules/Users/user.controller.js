@@ -300,24 +300,24 @@ export const resendConfirmationEmail = asyncHandler(async (req, res, next) => {
 });
 
 
-export const AddProfilePicture = asyncHandler(async (req, res, next) => {
-  if (!req.file) {
-    return res.status(400).json({ success: false, message: "No image uploaded" });
-  }
+// export const AddProfilePicture = asyncHandler(async (req, res, next) => {
+//   if (!req.file) {
+//     return res.status(400).json({ success: false, message: "No image uploaded" });
+//   }
 
-  const user = await userModel.findByIdAndUpdate(
-    req.user._id,
-    { profileImage: req.file.path },
-    { new: true }
-  );
+//   const user = await userModel.findByIdAndUpdate(
+//     req.user._id,
+//     { profileImage: req.file.path },
+//     { new: true }
+//   );
 
-  res.status(201).json({ success: true, message: "Profile image updated", result: user });
-});
+//   res.status(201).json({ success: true, message: "Profile image updated", result: user });
+// });
 
 
-export const CoverImages=asyncHandler(async(req,res,next)=>{
-const user=await userModel.findById(req.user._id)
-user.coverImages=req.files.map((file)=>file.path)
-await user.save();
-return res.status(201).json({success:true,result:{files:req.files}})
-})
+// export const CoverImages=asyncHandler(async(req,res,next)=>{
+// const user=await userModel.findById(req.user._id)
+// user.coverImages=req.files.map((file)=>file.path)
+// await user.save();
+// return res.status(201).json({success:true,result:{files:req.files}})
+// })

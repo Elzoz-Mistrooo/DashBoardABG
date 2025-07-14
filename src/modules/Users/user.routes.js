@@ -4,24 +4,24 @@ import {author,authAccessRole} from '../../middlewares/auth.js'
 import { endpoint } from "./user.endpoint.js";
 import { validation } from "../../middlewares/validation.js";
 import * as validators from './user.validationSchemas.js'
-import {  allowedExtensions, upload } from '../../utilits/newFeatures/multer.js'
+// import {  allowedExtensions, upload } from '../../utilits/newFeatures/multer.js'
 const router = Router();
 
 
 
 
-router.post(
-    "/Uploadimage",
-    author,
-    upload(allowedExtensions.Images).single("image"),
-    authController.AddProfilePicture
-  );
-router.post(
-    "/CoverImages",
-    author,
-    upload(allowedExtensions.Images).array("images"),
-    authController.CoverImages
-  );
+// router.post(
+//     "/Uploadimage",
+//     author,
+//     upload(allowedExtensions.Images).single("image"),
+//     authController.AddProfilePicture
+//   );
+// router.post(
+//     "/CoverImages",
+//     author,
+//     upload(allowedExtensions.Images).array("images"),
+//     authController.CoverImages
+//   );
   //low 3ez a3ml post la PDF/VIodes brdk
 // router.post(
 //     "/Fields",

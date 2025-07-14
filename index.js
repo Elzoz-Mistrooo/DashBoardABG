@@ -17,7 +17,10 @@ appRouter(app, express);
 export const handler = serverless(app);
 
 // optional for local testing
-app.listen(process.env.PORT || 3000, () => {
-  console.log(`Server running on port ${process.env.PORT || 3000}`);
-});
+if (process.env.NODE_ENV !== "production") {
+    app.listen(process.env.PORT || 3000, () => {
+      console.log(`Running on ${process.env.PORT || 3000}`);
+    });
+  }
+  
 

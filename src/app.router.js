@@ -14,7 +14,7 @@ export const appRouter = (app, express) => {
   app.use(cors())
   connectDB()
   app.get("/", (req, res) => {
-    return res.json({ message: "Hello We're in biggest Dashboard." });
+    return res.json({ message: "Hello We're in biggest Dashboard THIS SHIT JOB WALALHY." });
   });
 
   app.all("*", (req, res) => {

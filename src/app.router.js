@@ -1,6 +1,5 @@
 import authRoutes from './modules/Users/user.routes.js';
 import companiesRoutes from './modules/company/company.controller.js';
-
 import connectDB from '../DB/connection.js'
 import cors from 'cors'
 
@@ -11,13 +10,13 @@ export const appRouter = (app, express) => {
   app.use("/upload",express.static("upload"))
   app.use("/auth", authRoutes);
   app.use("/company",companiesRoutes)
-  // app.use("/authuser",authPrivate);
+
   app.use(cors())
   connectDB()
   app.get("/", (req, res) => {
     return res.json({ message: "Hello We're in biggest Dashboard." });
   });
-  
+
   app.all("*", (req, res) => {
     return res.status(404).json({ message: "In-valid Routing" });
   });

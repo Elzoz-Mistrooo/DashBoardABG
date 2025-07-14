@@ -23,8 +23,8 @@ const userSchema = new Schema({
   phone: { type: String },
   adress: { type: String },
  profileImage: {type:String},
+ coverImages:[String],
   DOB: String,
- 
   token: String,
 }, { timestamps: true });
 

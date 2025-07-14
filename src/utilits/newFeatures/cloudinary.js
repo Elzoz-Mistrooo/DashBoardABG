@@ -3,7 +3,7 @@ import path from 'path';
 import dotenv from 'dotenv'
 
 const _dirname = path.dirname(fileURLToPath(import.meta.url))
-dotenv.config({ path: path.join(_dirname, '../../config/.env') })
+dotenv.config({ path: path.join(_dirname, '') })
 
 
 

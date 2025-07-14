@@ -14,12 +14,13 @@ export const appRouter = (app, express) => {
   // app.use("/authuser",authPrivate);
   app.use(cors())
   connectDB()
-  app.use("*", (req, res, next) => {
-    return res.json({ message: "In-valid Routing" })
-})
-app.get("",(req,res)=>{
-        return res.json({mesage:"Hello We're in biggest Dashboard."})
-    })
+  app.get("/", (req, res) => {
+    return res.json({ message: "Hello We're in biggest Dashboard." });
+  });
+  
+  app.all("*", (req, res) => {
+    return res.status(404).json({ message: "In-valid Routing" });
+  });
 
 app.use((err, req, res, next) => {
   console.error("Global Error:", err.message);

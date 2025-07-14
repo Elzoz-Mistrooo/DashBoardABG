@@ -25,6 +25,7 @@
     "nanoid": "^5.1.5",
     "nodemailer": "^6.10.1",
     "nodemon": "^3.1.10",
+    "serverless-http": "^3.2.0",
     "ua-parser-js": "^2.0.4"
   }
 }

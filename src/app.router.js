@@ -17,7 +17,7 @@ export const appRouter = (app, express) => {
   app.use("*", (req, res, next) => {
     return res.json({ message: "In-valid Routing" })
 })
-app.get("/", (req, res, next) => {
+app.get("/home", (req, res, next) => {
   res.send(`
     <html>
       <head>

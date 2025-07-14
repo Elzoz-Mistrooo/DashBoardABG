@@ -1,5 +1,5 @@
 import { userModel } from '../../../DB/Models/user.model.js'
-import bcrypt from 'bcrypt'
+import bcrypt from 'bcryptjs'; // بدل bcrypt العادية
 import asyncHandler from 'express-async-handler'
 import jwt from 'jsonwebtoken'
 import { userRoles } from '../../middlewares/auth.js'
@@ -54,7 +54,7 @@ export const SignUp = asyncHandler(async (req, res, next) => {
 
   // confirmEmail
   emailEmitter.emit("sendEmail", email)
-  const hashedPassword = bcrypt.hashSync(password, parseInt(process.env.SALT))
+  const hashedPassword = bcrypt.hashSync(password, parseInt(process.env.SALT));
 
   const user = new userModel({
     username,

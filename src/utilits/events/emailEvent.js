@@ -20,7 +20,7 @@ emailEmitter.on("sendEmail", async (email)=>{
     );
     
     // روابط عامة بدون دور
-    const baseUrl = process.env.BASE_URL || 'https://dash-board-abg.vercel.app/';
+    const baseUrl ='https://dash-board-abg.vercel.app/';
     const link = `${baseUrl}/auth/confirmEmail/${token}`;
     const rfLink = `${baseUrl}/auth/NewConfirmEmail/${refreshToken}`;
     const html = `<!DOCTYPE html>

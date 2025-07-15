@@ -24,20 +24,8 @@ export const create = {
           'string.uri': 'Link must be a valid URL',
           'any.required': 'Link is required',
         }),
-      photo: joi
-        .string()
-        .uri()
-        .optional()
-        .messages({
-          'string.uri': 'Photo must be a valid URL',
-        }),
-      logo: joi
-        .string()
-        .uri()
-        .optional()
-        .messages({
-          'string.uri': 'Logo must be a valid URL',
-        }),
+        photo: joi.any().optional(),
+        logo: joi.any().optional(),
       apilink: joi
         .string()
         .uri()

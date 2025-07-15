@@ -6,11 +6,12 @@ import { allowedExtensions, Fileupload } from '../../utilits/newFeatures/multerC
 import { author } from '../../middlewares/auth.js';
 const router = express.Router();
 //Create lal Admin Bas
-router.post('/create',author,Fileupload(allowedExtensions.Image).array("images"), companyController.createCompany);
+router.post('/create',author,Fileupload(allowedExtensions.Image).fields([{ name: 'photo', maxCount: 5 }, { name: 'logo', maxCount: 1 }])
+, companyController.createCompany);
 router.patch('/:id/login', companyController.loginByType);
 router.patch('/:id/logout', companyController.logoutByType);
 router.get('/:id/active-users', companyController.getActiveUsersByType); // /:id/active-users?type=mobile
-router.get('/', companyController.getAllCompanies);
+router.get('/companies', companyController.getAllCompanies);
 router.get('/active-users/:deviceType', companyController.getActiveUsersByDevice);
 
 

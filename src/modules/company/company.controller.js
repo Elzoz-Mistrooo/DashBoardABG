@@ -1,9 +1,12 @@
 import express from 'express';
 import * as companyController from './service/company.js';
-
+// import { validation } from '../../middlewares/validation.js';
+// import * as validators from './company.validation.js'
+import { allowedExtensions, Fileupload } from '../../utilits/newFeatures/multerCloud.js';
+import { author } from '../../middlewares/auth.js';
 const router = express.Router();
 //Create lal Admin Bas
-router.post('/create', companyController.createCompany);
+router.post('/create',author,Fileupload(allowedExtensions.Image).array("images"), companyController.createCompany);
 router.patch('/:id/login', companyController.loginByType);
 router.patch('/:id/logout', companyController.logoutByType);
 router.get('/:id/active-users', companyController.getActiveUsersByType); // /:id/active-users?type=mobile

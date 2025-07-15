@@ -38,7 +38,7 @@ export const SignUpAdmin = asyncHandler(async (req, res, next) => {
 
   await admin.save();
 
-  res.status(201).json({ message: "Admin account created successfully", admin });
+  res.status(201).json({ message: "Admin account created successfully" });
 });
 
   export const SignUp = asyncHandler(async (req, res, next) => {
@@ -82,10 +82,8 @@ export const SignIn = asyncHandler(async (req, res) => {
   if (!user || !bcrypt.compareSync(password, user.password)) {
     return res.status(400).json({ message: 'Invalid credentials' });
   }
-
   const userAgent = req.headers['user-agent'];
   const loginDevice = detectLoginDevice(userAgent);
-
   const token = jwt.sign(
     {
       id: user._id,

@@ -2,6 +2,9 @@ import { asyncHandler } from '../../../utilits/globalerror.js';
 import {CompanyModel} from '../../../../DB/Models/company.js';
 //api /company
 export const createCompany = asyncHandler(async (req, res) => {
+  if (req.user.role !== 'admin') {
+    return res.status(403).json({ message: 'Access denied: Admins only' });
+  }
     const company = await CompanyModel.create(req.body);
     res.status(201).json({ message: 'Company created', company });
   });

@@ -40,7 +40,7 @@ router.post("/Login", validation(validators.login), authController.SignIn)
 router.patch("/sendCode", validation(validators.sendCode), authController.sendCode)
 router.patch("/forgetpassword", validation(validators.forgetpassword), authController.forgetPassword)
 router.get("/userprofile",author,authAccessRole(endpoint),authController.Getprofile)
-router.post("admin/signup", authController.SignUpAdmin);
+router.post("/adminCreate", authController.SignUpAdmin);
 router.get("/confirmEmail/:token", authController.confirmEmail);
 router.get("/newConfirmEmail/:token", authController.newConfirmEmail);
 router.post('/logout', author,authController.logout);

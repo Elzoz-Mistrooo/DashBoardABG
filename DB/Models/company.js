@@ -3,7 +3,7 @@ import mongoose from 'mongoose';
 const companySchema = new mongoose.Schema({
   name: { type: String, required: true },
   link: String,
-  photo: String,
+  photo: [String],
   logo: String,
   apiLink: String,
   users: {

@@ -1,35 +1,32 @@
+// src/app.router.js
 import authRoutes from './modules/Users/user.routes.js';
 import companiesRoutes from './modules/company/company.controller.js';
-import connectDB from '../DB/connection.js'
-import cors from 'cors'
-
-// import authPrivate from './modules/Users/user.privatesaccRoutes.js'
+import cors from 'cors';
 
 export const appRouter = (app, express) => {
+  app.use(cors());
   app.use(express.json());
-  app.use("/upload",express.static("upload"))
+  app.use("/upload", express.static("upload"));
+
   app.use("/auth", authRoutes);
-  app.use("/company",companiesRoutes)
+  app.use("/company", companiesRoutes);
 
-  app.use(cors())
-  console.log("💡 Inside appRouter");
-
-  connectDB()
   app.get("/", (req, res) => {
-    return res.json({ message: "Hello We're in biggest Dashboard THIS SHIT JOB WALALHY." });
+    return res.json({ message: "✅ Welcome to the Dashboard API" });
   });
 
   app.all("*", (req, res) => {
-    return res.status(404).json({ message: "In-valid Routing" });
+    return res.status(404).json({ message: "❌ In-valid Routing" });
   });
 
-app.use((err, req, res, next) => {
-  console.error("Global Error:", err.message);
-  res.status(500).json({
-    success: false,
-    message: "Internal Server Error",
-    error: err.message,
+  // Error handler
+  app.use((err, req, res, next) => {
+    console.error("Global Error:", err.message);
+    res.status(500).json({
+      success: false,
+      message: "Internal Server Error",
+      error: err.message,
+    });
   });
-});
 
 };

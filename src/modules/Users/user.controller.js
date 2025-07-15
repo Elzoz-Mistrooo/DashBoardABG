@@ -41,35 +41,35 @@ export const SignUpAdmin = asyncHandler(async (req, res, next) => {
   res.status(201).json({ message: "Admin account created successfully", admin });
 });
 
-export const SignUp = asyncHandler(async (req, res, next) => {
-  // const { test } = req.query
+  export const SignUp = asyncHandler(async (req, res, next) => {
+    // const { test } = req.query
 
-  const { username, email, password, gender } = req.body
+    const { username, email, password, gender } = req.body
 
-  // email check
-  const isUserExists = await userModel.findOne({ email })
-  if (isUserExists) {
-    return res.status(400).json({ message: 'Email is already exists' })
-  }
+    // email check
+    const isUserExists = await userModel.findOne({ email })
+    if (isUserExists) {
+      return res.status(400).json({ message: 'Email is already exists' })
+    }
 
-  // confirmEmail
-  emailEmitter.emit("sendEmail", email)
-  const hashedPassword = bcrypt.hashSync(password, parseInt(process.env.SALT));
+    // confirmEmail
+    emailEmitter.emit("sendEmail", email)
+    const hashedPassword = bcrypt.hashSync(password, parseInt(process.env.SALT));
 
-  const user = new userModel({
-    username,
-    email,
-    password: hashedPassword,
-    gender,
+    const user = new userModel({
+      username,
+      email,
+      password: hashedPassword,
+      gender,
+    })
+
+
+
+    await user.save()
+    res.status(201).json({
+      message: `Done, ${user.email} has been created`
+    });
   })
-
-
-
-  await user.save()
-  res.status(201).json({
-    message: `Done, ${user.email} has been created`
-  });
-})
 
 //================================== Confirm email =====================
 

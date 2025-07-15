@@ -1,27 +1,40 @@
 // api/index.js
 import express from 'express';
 import { appRouter } from '../src/app.router.js';
+import connectDB from '../DB/connection.js';
 import { config } from 'dotenv';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
+// Load env variables
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-
-// Load environment variables
 config({ path: path.resolve(__dirname, '../config/config.env') });
 
+// Create express app
 const app = express();
-appRouter(app, express);
 
-// ✅ Handler that Vercel understands
-export default function handler(req, res) {
+// ✅ تأكد من الاتصال قبل تركيب الراوتر
+let isConnected = false;
+
+async function setupApp() {
+  if (!isConnected) {
+    await connectDB(); // 👈 ده مهم جدًا
+    isConnected = true;
+  }
+  appRouter(app, express);
+}
+
+export default async function handler(req, res) {
+  await setupApp(); // ⬅️ اتأكد الاتصال حصل قبل أي طلب
   return app(req, res);
 }
 
-// Optional: Run locally
+// Optional: Local dev mode
 if (process.env.NODE_ENV !== 'production') {
-  app.listen(process.env.PORT || 3000, () => {
-    console.log(`Running on ${process.env.PORT || 3000}`);
+  setupApp().then(() => {
+    app.listen(process.env.PORT || 3000, () => {
+      console.log(`🚀 Running locally on port ${process.env.PORT || 3000}`);
+    });
   });
 }

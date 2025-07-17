@@ -110,17 +110,18 @@ export const SignIn = asyncHandler(async (req, res) => {
   res.status(200).json({ message: 'Login successful', token });
 });
 
-export const Getprofile = asyncHandler(async (req, res, next) => {
-  const userId = req.user._id;
+  export const Getprofile = asyncHandler(async (req, res, next) => {
+    const userId = req.user._id;
+    console.log(req.user);
 
-  const getprofile = await userModel.findById(userId).select("-password -role -confirmEmail -forgetCode -isAdmin -__v  -updatedAt")
-  if (!getprofile) {
-    return next(new Error("No profile found"));
-  }
+    const getprofile = await userModel.findById(userId).select("-password -role -confirmEmail -forgetCode -isAdmin -__v  -updatedAt")
+    if (!getprofile) {
+      return next(new Error("No profile found"));
+    }
 
-  // getprofile.image = getprofile.image?.secure_url;
-  return res.json({ message: "Done", getprofile });
-});
+    // getprofile.image = getprofile.image?.secure_url;
+    return res.json({ message: "Done", getprofile });
+  });
 
 export const confirmEmail = asyncHandler(async (req, res, next) => {
   const { token } = req.params;
@@ -319,7 +320,7 @@ export const newConfirmEmail = asyncHandler(async (req, res, next) => {
 
 
 
-// لو في حاله محلصش confirm Email
+// لو في حاله محلصش confirm Email 
 export const resendConfirmationEmail = asyncHandler(async (req, res, next) => {
   const { email } = req.body;
 
@@ -364,4 +365,18 @@ export const resendConfirmationEmail = asyncHandler(async (req, res, next) => {
 // user.coverImages=req.files.map((file)=>file.path)
 // await user.save();
 // return res.status(201).json({success:true,result:{files:req.files}})
+// })
+
+
+// export const verifyOTP=asyncHandler(async(req,res,next)=>{
+//   const{email}=req.body
+
+ 
+//     const findEmail=await userModel.findOne({email:email.toLowerCase()})
+//     if(findEmail)
+//     return next(new Error({message:"Hello It's not found Here this email"}));
+
+//     //generate OTP
+//     const otp=RandomString.generate=({})
+  
 // })

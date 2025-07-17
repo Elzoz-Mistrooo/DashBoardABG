@@ -4,6 +4,7 @@ import { userModel } from '../../../../DB/Models/user.model.js';
 //api /company
 export const createCompany = asyncHandler(async (req, res) => {
   // تحقق من صلاحية الأدمن
+
   if (req.user.role !== 'admin') {
     return res.status(403).json({ message: 'Access denied: Admins only' });
   }

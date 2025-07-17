@@ -9,7 +9,7 @@ const router = Router();
 
 
 
-router.post("/verifyOTP",validation)
+// router.post("/verifyOTP",validation)
 // router.post(
 //     "/Uploadimage",
 //     author,
@@ -34,7 +34,7 @@ router.post("/verifyOTP",validation)
 //     authController.CoverImages
 //   );
 
-router.get("/users",authController.getusers)
+router.get("/users",author('admin'), authAccessRole('admin'),authController.getusers)
 router.post("/Signup",validation(validators.Signup) ,authController.SignUp)
 router.post("/Login", validation(validators.login), authController.SignIn)
 
@@ -44,7 +44,7 @@ router.patch("/forgetPassword", author("forget"), authController.forgetPassword)
 // router.get("/adminDashboard", author("admin"), authAccessRole(["admin"]), adminDashboard);
 // router.get("/userProfile", author("user"), userProfile);
 
-router.get("/userprofile",author,authAccessRole(endpoint),authController.Getprofile)
+router.get("/userprofile", author('user'), authAccessRole('user'),authController.Getprofile);
 router.post("/adminCreate", authController.SignUpAdmin);
 router.get("/confirmEmail/:token", authController.confirmEmail);
 router.get("/newConfirmEmail/:token", authController.newConfirmEmail);

@@ -7,6 +7,10 @@ import { sendEmail } from '../../utilits/sendEmails.js'
 import { emailEmitter } from '../../utilits/events/emailEvent.js'
 import { customAlphabet, nanoid } from 'nanoid';
 import { detectLoginDevice } from '../../utilits/detectDash.js'
+import CryptoJS from 'crypto-js';
+
+
+
 
 //==================================== SignUp ===========================
 export const getusers = asyncHandler(async (req, res, next) => {
@@ -44,23 +48,25 @@ export const SignUpAdmin = asyncHandler(async (req, res, next) => {
   export const SignUp = asyncHandler(async (req, res, next) => {
     // const { test } = req.query
 
-    const { username, email, password, gender } = req.body
+    const { username, email, password, gender ,phone} = req.body
 
     // email check
     const isUserExists = await userModel.findOne({ email })
     if (isUserExists) {
       return res.status(400).json({ message: 'Email is already exists' })
     }
+    const hashedPassword = bcrypt.hashSync(password, parseInt(process.env.SALT));
+    const encryptPhone = CryptoJS.AES.encrypt(phone, process.env.PHONE_ENCRYPT).toString();
 
     // confirmEmail
     emailEmitter.emit("sendEmail", email)
-    const hashedPassword = bcrypt.hashSync(password, parseInt(process.env.SALT));
 
     const user = new userModel({
       username,
       email,
       password: hashedPassword,
       gender,
+      phone:encryptPhone
     })
 
 
@@ -142,96 +148,138 @@ export const confirmEmail = asyncHandler(async (req, res, next) => {
   }
 });
 // 
+
 export const sendCode = asyncHandler(async (req, res, next) => {
-  const { email } = req.body;
+  const { email, phone } = req.body;
+
+  if (!email && !phone) {
+    return res.status(400).json({ message: "email or phone is required" });
+  }
+
   const nanoId = customAlphabet('123456789', 4);
+  const code = nanoId();
+  let user;
 
-  let user = await userModel.findOne({ email: email.toLowerCase() });
-  if (!user) {
-    return next(new Error('Invalid email', { cause: 404 }));
+  if (email) {
+    user = await userModel.findOne({ email: email.toLowerCase() });
+    if (!user) return next(new Error('Invalid email', { cause: 404 }));
+
+    await userModel.findOneAndUpdate(
+      { email: email.toLowerCase() },
+      { forgetCode: code, codeVerified: false }
+    );
+
+    const html = `
+      <div style="font-family: Arial, sans-serif; padding: 10px;">
+        <h2>🔐 Your OTP Code</h2>
+        <p>Use this code to reset your password:</p>
+        <h1 style="color: #4CAF50;">${code}</h1>
+        <p>This code will expire soon.</p>
+      </div>
+    `;
+
+    try {
+      const isSent = await sendEmail({
+        to: email,
+        subject: "EasyClinic - Your Verification Code",
+        html,
+      });
+
+      if (isSent) {
+        return res.status(200).json({ message: "Code sent to your email" });
+      } else {
+        return res.status(500).json({ message: "Failed to send email" });
+      }
+    } catch (err) {
+      return next(new Error("Email service failed", { cause: 500 }));
+    }
+
+  } else if (phone) {
+    const encryptedPhone = CryptoJS.AES.encrypt(phone, process.env.PHONE_ENCRYPT).toString();
+    user = await userModel.findOne({ phone: encryptedPhone });
+
+    if (!user) return next(new Error('Invalid phone number', { cause: 404 }));
+
+    user.forgetCode = code;
+    user.codeVerified = false;
+    await user.save();
+
+    // هنا المفروض ترسل SMS بالـ code لو عندك خدمة SMS API
+    return res.status(200).json({ message: "OTP sent to your phone" });
   }
-
-  user = await userModel.findOneAndUpdate(
-    { email: email.toLowerCase() },
-    { forgetCode: nanoId() },
-    { new: true }
-  );
-
-  const html = `<!DOCTYPE html>
-  <html>
-  <head>
-      <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-  </head>
-  <style type="text/css">
-      body { background-color: #88BDBF; margin: 0px; }
-  </style>
-  <body>
-      <table border="0" width="50%" style="margin:auto;padding:30px;background-color:#F3F3F3;border:1px solid #630E2B;">
-          <tr>
-              <td>
-                  <table border="0" width="100%">
-                      <tr>
-                          <td>
-                              <h1><img width="100px" src="https://res.cloudinary.com/ddajommsw/image/upload/v1670702280/Group_35052_icaysu.png"/></h1>
-                          </td>
-                          <td>
-                              <p style="text-align: right;"><a href="http://localhost:4200/#/" target="_blank" style="text-decoration: none;">View In Website</a></p>
-                          </td>
-                      </tr>
-                  </table>
-              </td>
-          </tr>
-          <tr>
-              <td>
-                  <table border="0" style="text-align:center;width:100%;background-color:#fff;">
-                      <tr>
-                          <td style="background-color:#630E2B;height:100px;font-size:50px;color:#fff;">
-                              <img width="50px" height="50px" src="${process.env.logo}">
-                          </td>
-                      </tr>
-                      <tr>
-                          <td><h1 style="padding-top:25px; color:#630E2B">Reset password</h1></td>
-                      </tr>
-                      <tr>
-                          <td>
-                              <p style="margin:10px 0px 30px 0px;border-radius:4px;padding:10px 20px;border: 0;color:#fff;background-color:#630E2B;">${user.forgetCode}</p>
-                          </td>
-                      </tr>
-                  </table>
-              </td>
-          </tr>
-      </table>
-  </body>
-  </html>`;
-
-  if (!(await sendEmail({ to: email, subject: 'Forget Password', html }))) {
-    return next(new Error({ message: "Email Rejected" }));
-  }
-
-  return res.status(200).json({ message: "Done" });
 });
 
-export const forgetPassword = asyncHandler(async (req, res, next) => {
-  const { email, forgetCode, password, cPassword } = req.body;
 
-  let user = await userModel.findOne({ email: email.toLowerCase() });
+
+export const verifyCode = asyncHandler(async (req, res, next) => {
+  const { email, phone, forgetCode } = req.body;
+
+  if ((!email && !phone) || !forgetCode) {
+    return res.status(400).json({ message: "Email or phone and forgetCode are required" });
+  }
+
+  let user;
+
+  // ✅ البحث بالإيميل أو الهاتف
+  if (email) {
+    user = await userModel.findOne({ email: email.toLowerCase() });
+  } else if (phone) {
+    const encryptedPhone = CryptoJS.AES.encrypt(phone, process.env.PHONE_ENCRYPT).toString();
+    user = await userModel.findOne({ phone: encryptedPhone });
+  }
 
   if (!user) {
-    return next(new Error('Not registered account', { cause: 404 }));
+    return next(new Error("Account not found", { cause: 404 }));
   }
 
   if (user.forgetCode != parseInt(forgetCode)) {
-    return next(new Error('Invalid code', { cause: 400 }));
+    return next(new Error("Invalid code", { cause: 400 }));
   }
 
-  user.password = bcrypt.hashSync(password, parseInt(process.env.SALT))
+  user.codeVerified = true;
+  await user.save();
+
+  const token = jwt.sign(
+    { userId: user._id },
+    process.env.FORGET_TOKEN_SECRET,
+    { expiresIn: "10m" }
+  );
+
+  return res.status(200).json({
+    message: "Code verified successfully",
+    token
+  });
+});
+
+
+
+
+export const forgetPassword = asyncHandler(async (req, res, next) => {
+  const { password, cPassword } = req.body;
+  const user = await userModel.findById(req.userId);
+
+  if (!user) {
+    return next(new Error('User not found', { cause: 404 }));
+  }
+
+  if (!user.codeVerified) {
+    return next(new Error('Code not verified', { cause: 401 }));
+  }
+
+  user.password = bcrypt.hashSync(password, parseInt(process.env.SALT));
   user.forgetCode = null;
+  user.codeVerified = false;
   user.changePasswordTime = Date.now();
 
   await user.save();
 
-  return res.status(200).json({ message: "Done" });
+  return res.status(200).json({ message: "Password changed successfully" });
 });
+
+
+
+
+
 
 export const logout = asyncHandler(async (req, res) => {
   await userModel.updateOne(

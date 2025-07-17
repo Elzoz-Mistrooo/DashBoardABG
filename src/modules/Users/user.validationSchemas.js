@@ -16,6 +16,7 @@ export const Signup = {
       password: generalFields.password,
       cPassword: joi.valid(joi.ref('password')).required(),
       gender: joi.string().optional(),
+      phone: joi.string().pattern(/^01[0125][0-9]{8}$/).required()
     })
     .required(),
 
@@ -48,3 +49,11 @@ export const forgetpassword = joi.object({
 
 
 }).required();
+
+export const verifyCode = {
+  body: joi.object({
+    email: joi.string().email(), // اختياري
+    phone: joi.string().pattern(/^01[0125][0-9]{8}$/), // رقم مصري مثلاً
+    forgetCode: joi.string().length(4).required()
+  }).or('email', 'phone') // واحد منهم لازم يكون موجود
+};

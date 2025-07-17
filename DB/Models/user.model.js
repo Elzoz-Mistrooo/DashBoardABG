@@ -17,6 +17,8 @@ const userSchema = new Schema({
     enum: ['browser', 'mobile', 'office', 'backend', null],
     default: null,
   },
+  codeVerified: { type: Boolean, default: false },
+
     role: { type: String, enum: Object.values(userRoles), default: userRoles.user },
   forgetCode: { type: Number, default: null },
   changePasswordTime: { type: Date },

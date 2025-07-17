@@ -37,8 +37,13 @@ const router = Router();
 router.get("/users",authController.getusers)
 router.post("/Signup",validation(validators.Signup) ,authController.SignUp)
 router.post("/Login", validation(validators.login), authController.SignIn)
+
+
 router.patch("/sendCode", validation(validators.sendCode), authController.sendCode)
+router.post("/verifyCode", validation(validators.verifyCode), authController.verifyCode); // ✅ جديد
 router.patch("/forgetpassword", validation(validators.forgetpassword), authController.forgetPassword)
+
+
 router.get("/userprofile",author,authAccessRole(endpoint),authController.Getprofile)
 router.post("/adminCreate", authController.SignUpAdmin);
 router.get("/confirmEmail/:token", authController.confirmEmail);

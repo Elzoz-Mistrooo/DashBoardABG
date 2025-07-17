@@ -44,7 +44,8 @@ router.patch("/forgetPassword", author("forget"), authController.forgetPassword)
 // router.get("/adminDashboard", author("admin"), authAccessRole(["admin"]), adminDashboard);
 // router.get("/userProfile", author("user"), userProfile);
 
-router.get("/userprofile", author('user'), authAccessRole('user'),authController.Getprofile);
+router.get("/userprofile", author, authAccessRole('user'), authController.getProfileData);
+// router.get("/adminprofile", author, authAccessRole('admin'), authController.GetAdminData);
 router.post("/adminCreate", authController.SignUpAdmin);
 router.get("/confirmEmail/:token", authController.confirmEmail);
 router.get("/newConfirmEmail/:token", authController.newConfirmEmail);

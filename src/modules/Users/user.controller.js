@@ -19,7 +19,7 @@ export const getusers = asyncHandler(async (req, res, next) => {
 })
 
 export const SignUpAdmin = asyncHandler(async (req, res, next) => {
-  const { username, email, password, gender } = req.body;
+  const { username, email, password, gender,phone } = req.body;
 
   // Check if email exists
   const isUserExists = await userModel.findOne({ email });
@@ -36,6 +36,7 @@ export const SignUpAdmin = asyncHandler(async (req, res, next) => {
     username,
     email,
     password: hashedPassword,
+    phone,
     gender,
     role: "admin", // <<< role is enforced
   });
@@ -110,18 +111,26 @@ export const SignIn = asyncHandler(async (req, res) => {
   res.status(200).json({ message: 'Login successful', token });
 });
 
-  export const Getprofile = asyncHandler(async (req, res, next) => {
-    const userId = req.user._id;
-    console.log(req.user);
+export const getProfileData = asyncHandler(async (req, res, next) => {
+  const userId = req.user?._id;
 
-    const getprofile = await userModel.findById(userId).select("-password -role -confirmEmail -forgetCode -isAdmin -__v  -updatedAt")
-    if (!getprofile) {
-      return next(new Error("No profile found"));
-    }
+  if (!userId) {
+    return next(new Error("Unauthorized: No user ID found", { cause: 401 }));
+  }
 
-    // getprofile.image = getprofile.image?.secure_url;
-    return res.json({ message: "Done", getprofile });
+  const profile = await userModel.findById(userId)
+    .select("-password -confirmEmail -forgetCode -__v -updatedAt");
+
+  if (!profile) {
+    return next(new Error("No profile found", { cause: 404 }));
+  }
+
+  return res.status(200).json({
+    message: "Done",
+    role: req.user.role,
+    profile,
   });
+});
 
 export const confirmEmail = asyncHandler(async (req, res, next) => {
   const { token } = req.params;

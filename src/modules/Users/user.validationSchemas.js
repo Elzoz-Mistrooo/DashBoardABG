@@ -56,12 +56,7 @@ export const verifyCode = {
     phone: joi.string().pattern(/^01[0125][0-9]{8}$/),
     forgetCode: joi.string().length(4).required()
   })
-  .or('email', 'phone') // واحد منهم مطلوب
+  .or('email', 'phone') // واWحد منهم مطلوب
  
 };
 
-export const sendOTP = {
-  body: joi.object({
-    email: joi.string().email().required()
-  }).required()
-};

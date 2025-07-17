@@ -220,7 +220,6 @@ export const verifyCode = asyncHandler(async (req, res, next) => {
 
   let user;
 
-  // ✅ البحث بالإيميل أو الهاتف
   if (email) {
     user = await userModel.findOne({ email: email.toLowerCase() });
   } else if (phone) {
@@ -228,9 +227,7 @@ export const verifyCode = asyncHandler(async (req, res, next) => {
     user = await userModel.findOne({ phone: encryptedPhone });
   }
 
-  if (!user) {
-    return next(new Error("Account not found", { cause: 404 }));
-  }
+  if (!user) return next(new Error("Account not found", { cause: 404 }));
 
   if (user.forgetCode != parseInt(forgetCode)) {
     return next(new Error("Invalid code", { cause: 400 }));
@@ -239,10 +236,11 @@ export const verifyCode = asyncHandler(async (req, res, next) => {
   user.codeVerified = true;
   await user.save();
 
+  // هنا بنولّد توكن خاص بنسيان الباسورد
   const token = jwt.sign(
-    { userId: user._id },
+    { id: user._id }, // لازم id علشان author يشتغل
     process.env.FORGET_TOKEN_SECRET,
-    { expiresIn: "10m" }
+    { expiresIn: "15m" }
   );
 
   return res.status(200).json({

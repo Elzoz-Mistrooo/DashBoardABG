@@ -41,8 +41,9 @@ router.post("/Login", validation(validators.login), authController.SignIn)
 
 router.patch("/sendCode", validation(validators.sendCode), authController.sendCode)
 router.post("/verifyCode", validation(validators.verifyCode), authController.verifyCode); // ✅ جديد
-router.patch("/forgetpassword", validation(validators.forgetpassword), authController.forgetPassword)
-
+router.patch("/forgetPassword", author("forget"), authController.forgetPassword);
+// router.get("/adminDashboard", author("admin"), authAccessRole(["admin"]), adminDashboard);
+// router.get("/userProfile", author("user"), userProfile);
 
 router.get("/userprofile",author,authAccessRole(endpoint),authController.Getprofile)
 router.post("/adminCreate", authController.SignUpAdmin);

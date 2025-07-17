@@ -52,8 +52,16 @@ export const forgetpassword = joi.object({
 
 export const verifyCode = {
   body: joi.object({
-    email: joi.string().email(), // اختياري
-    phone: joi.string().pattern(/^01[0125][0-9]{8}$/), // رقم مصري مثلاً
+    email: joi.string().email(),
+    phone: joi.string().pattern(/^01[0125][0-9]{8}$/),
     forgetCode: joi.string().length(4).required()
-  }).or('email', 'phone') // واحد منهم لازم يكون موجود
+  })
+  .or('email', 'phone') // واحد منهم مطلوب
+ 
+};
+
+export const sendOTP = {
+  body: joi.object({
+    email: joi.string().email().required()
+  }).required()
 };

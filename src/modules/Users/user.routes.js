@@ -9,7 +9,7 @@ const router = Router();
 
 
 
-
+router.post("/verifyOTP",validation)
 // router.post(
 //     "/Uploadimage",
 //     author,
@@ -37,7 +37,6 @@ const router = Router();
 router.get("/users",authController.getusers)
 router.post("/Signup",validation(validators.Signup) ,authController.SignUp)
 router.post("/Login", validation(validators.login), authController.SignIn)
-
 
 router.patch("/sendCode", validation(validators.sendCode), authController.sendCode)
 router.post("/verifyCode", validation(validators.verifyCode), authController.verifyCode); // ✅ جديد
